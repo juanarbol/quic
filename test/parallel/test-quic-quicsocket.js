@@ -139,7 +139,7 @@ socket.on('ready', common.mustCall(() => {
 
 socket.on('close', common.mustCall(() => {
   const expectedError = { code: 'ERR_QUICSOCKET_DESTROYED' };
-  const message = (method) => `Cannot call ${method} after a QuicSocket has been destroyed`
+  const message = (method) => `Cannot call ${method} after a QuicSocket has been destroyed`;
 
   assert.throws(() => socket.setTTL(1), { ...expectedError, message: message('setTTL') });
   assert.throws(() => socket.setMulticastTTL(1), { ...expectedError, message: message('setMulticastTTL') });
@@ -148,5 +148,5 @@ socket.on('close', common.mustCall(() => {
   assert.throws(() => socket.setMulticastInterface(true), { ...expectedError, message: message('setMulticastInterface') });
   assert.throws(() => socket.addMembership('foo', 'bar'), { ...expectedError, message: message('addMembership') });
   assert.throws(() => socket.dropMembership('foo', 'bar'), { ...expectedError, message: message('dropMembership') });
-  assert.throws(() => socket.setServerBusy(true), expectedError);
+  assert.throws(() => socket.setServerBusy(true), { ...expectedError, message: message('setServerBusy') });
 }));
