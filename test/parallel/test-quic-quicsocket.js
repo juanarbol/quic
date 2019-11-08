@@ -138,15 +138,40 @@ socket.on('ready', common.mustCall(() => {
 }));
 
 socket.on('close', common.mustCall(() => {
-  const expectedError = { code: 'ERR_QUICSOCKET_DESTROYED' };
-  const message = (method) => `Cannot call ${method} after a QuicSocket has been destroyed`;
+  const err = { code: 'ERR_QUICSOCKET_DESTROYED' };
+  const message = (method) => `Cannot call ${method} ` +
+                              'after a QuicSocket has been destroyed';
 
-  assert.throws(() => socket.setTTL(1), { ...expectedError, message: message('setTTL') });
-  assert.throws(() => socket.setMulticastTTL(1), { ...expectedError, message: message('setMulticastTTL') });
-  assert.throws(() => socket.setBroadcast(true), { ...expectedError, message: message('setBroadcast') });
-  assert.throws(() => socket.setMulticastLoopback(), { ...expectedError, message: message('setMulticastLoopback') });
-  assert.throws(() => socket.setMulticastInterface(true), { ...expectedError, message: message('setMulticastInterface') });
-  assert.throws(() => socket.addMembership('foo', 'bar'), { ...expectedError, message: message('addMembership') });
-  assert.throws(() => socket.dropMembership('foo', 'bar'), { ...expectedError, message: message('dropMembership') });
-  assert.throws(() => socket.setServerBusy(true), { ...expectedError, message: message('setServerBusy') });
+  assert.throws(
+    () => socket.setTTL(1),
+    { ...err, message: message('setTTL') }
+  );
+  assert.throws(
+    () => socket.setMulticastTTL(1),
+    { ...err, message: message('setMulticastTTL') }
+  );
+  assert.throws(
+    () => socket.setBroadcast(true),
+    { ...err, message: message('setBroadcast') }
+  );
+  assert.throws(
+    () => socket.setMulticastLoopback(),
+    { ...err, message: message('setMulticastLoopback') }
+  );
+  assert.throws(
+    () => socket.setMulticastInterface(true),
+    { ...err, message: message('setMulticastInterface') }
+  );
+  assert.throws(
+    () => socket.addMembership('foo', 'bar'),
+    { ...err, message: message('addMembership') }
+  );
+  assert.throws(
+    () => socket.dropMembership('foo', 'bar'),
+    { ...err, message: message('dropMembership') }
+  );
+  assert.throws(
+    () => socket.setServerBusy(true),
+    { ...err, message: message('setServerBusy') }
+  );
 }));
