@@ -136,3 +136,15 @@ socket.on('ready', common.mustCall(() => {
   socket.destroy();
   assert(socket.destroyed);
 }));
+
+socket.on('close', common.mustCall(() => {
+  const expectedError = { code: 'ERR_QUICSOCKET_DESTROYED' };
+  assert.throws(() => socket.setTTL(1), expectedError);
+  assert.throws(() => socket.setMulticastTTL(1), expectedError);
+  assert.throws(() => socket.setBroadcast(true), expectedError);
+  assert.throws(() => socket.setMulticastLoopback(), expectedError);
+  assert.throws(() => socket.setMulticastInterface(true), expectedError);
+  assert.throws(() => socket.addMembership('foo', 'bar'), expectedError);
+  assert.throws(() => socket.dropMembership('foo', 'bar'), expectedError);
+  assert.throws(() => socket.setServerBusy(true), expectedError);
+}));
