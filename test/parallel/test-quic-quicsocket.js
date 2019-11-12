@@ -138,40 +138,41 @@ socket.on('ready', common.mustCall(() => {
 }));
 
 socket.on('close', common.mustCall(() => {
-  const err = { code: 'ERR_QUICSOCKET_DESTROYED' };
-  const message = (method) => `Cannot call ${method} ` +
-                              'after a QuicSocket has been destroyed';
+  const makeError = (method) => ({
+    code: 'ERR_QUICSOCKET_DESTROYED',
+    message: `Cannot call ${method} after a QuicSocket has been destroyed`
+  });
 
   assert.throws(
     () => socket.setTTL(1),
-    { ...err, message: message('setTTL') }
+    makeError('setTTL')
   );
   assert.throws(
     () => socket.setMulticastTTL(1),
-    { ...err, message: message('setMulticastTTL') }
+    makeError('setMulticastTTL')
   );
   assert.throws(
     () => socket.setBroadcast(true),
-    { ...err, message: message('setBroadcast') }
+    makeError('setBroadcast')
   );
   assert.throws(
     () => socket.setMulticastLoopback(),
-    { ...err, message: message('setMulticastLoopback') }
+    makeError('setMulticastLoopback')
   );
   assert.throws(
     () => socket.setMulticastInterface(true),
-    { ...err, message: message('setMulticastInterface') }
+    makeError('setMulticastInterface')
   );
   assert.throws(
     () => socket.addMembership('foo', 'bar'),
-    { ...err, message: message('addMembership') }
+    makeError('addMembership')
   );
   assert.throws(
     () => socket.dropMembership('foo', 'bar'),
-    { ...err, message: message('dropMembership') }
+    makeError('dropMembership')
   );
   assert.throws(
     () => socket.setServerBusy(true),
-    { ...err, message: message('setServerBusy') }
+    makeError('setServerBusy')
   );
 }));
