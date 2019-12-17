@@ -46,7 +46,6 @@ server.on('session', common.mustCall((session) => {
       name: 'Error',
       message: 'Unable to update QuicSession keys'
     });
-    console.log('that\'s it')
   });
 }));
 
