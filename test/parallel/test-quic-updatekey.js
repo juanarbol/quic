@@ -16,14 +16,16 @@ const ca = fixtures.readKey('ca1-cert.pem', 'binary');
 
 const { createSocket } = require('quic');
 const kServerPort = process.env.NODE_DEBUG_KEYLOG ? 5678 : 0;
+const kClientPort = process.env.NODE_DEBUG_KEYLOG ? 5679 : 0;
+let client;
 
 const server = createSocket({ port: kServerPort, validateAddress: true });
 server.setDiagnosticPacketLoss({ rx: 0.00, tx: 0.00 });
 const kALPN = 'meow';  // ALPN can be overriden to whatever we want
+const kServerName = 'agent2';  // Intentionally the wrong servername
 
 
 const countdown = new Countdown(2, () => {
-  debug('Countdown expired. Destroying sockets');
   server.close();
   client.close();
 });
@@ -38,12 +40,32 @@ server.listen({
   maxCryptoBuffer: 4096,
 });
 server.on('session', common.mustCall((session) => {
-  debug('QuicServerSession Created');
   process.nextTick(() => {
     assert.throws(() => session.updateKey(), {
       code: 'ERR_QUICSESSION_UPDATEKEY',
       name: 'Error',
       message: 'Unable to update QuicSession keys'
     });
+    console.log('that\'s it')
   });
+}));
+
+server.on('ready', common.mustCall(() => {
+  client = createSocket({
+    port: kClientPort,
+    client: {
+      key,
+      cert,
+      ca,
+      alpn: kALPN,
+    }
+  });
+
+  client.connect({
+    address: 'localhost',
+    port: server.address.port,
+    servername: kServerName,
+    requestOCSP: true,
+  });
+  
 }));
