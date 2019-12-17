@@ -7,6 +7,8 @@ const common = require('../common');
 if (!common.hasQuic)
   common.skip('missing quic');
 
+const assert = require('assert');
+const Countdown = require('../common/countdown');
 const fixtures = require('../common/fixtures');
 const key = fixtures.readKey('agent1-key.pem', 'binary');
 const cert = fixtures.readKey('agent1-cert.pem', 'binary');
@@ -17,6 +19,14 @@ const kServerPort = process.env.NODE_DEBUG_KEYLOG ? 5678 : 0;
 
 const server = createSocket({ port: kServerPort, validateAddress: true });
 server.setDiagnosticPacketLoss({ rx: 0.00, tx: 0.00 });
+const kALPN = 'meow';  // ALPN can be overriden to whatever we want
+
+
+const countdown = new Countdown(2, () => {
+  debug('Countdown expired. Destroying sockets');
+  server.close();
+  client.close();
+});
 
 server.listen({
   key,
